@@ -1,7 +1,30 @@
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
 }
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                url = uri("https://maven.pkg.github.com/lgygg/thread_pool")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
 
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                from components.release
+                groupId = 'lgygg'
+                artifactId = 'thread_pool'
+                version = '1.0.0'
+            }
+        }
+    }
+}
 android {
     namespace 'com.lgy.thread_pool'
     compileSdkVersion 32
@@ -27,4 +50,6 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'lgygg:util:1.0.1'
+    compileOnly group: 'com.j256.ormlite', name: 'ormlite-android', version: '5.0'
+    compileOnly group: 'com.j256.ormlite', name: 'ormlite-core', version: '5.0'
 }
