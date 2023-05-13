@@ -4,7 +4,7 @@ package com.lgy.pool.core;
  * @author: Administrator
  * @date: 2023/5/10
  */
-public abstract class AbsDownloadStrategy<E extends ProgressTask> implements DownloadStrategy {
+public abstract class AbsDownloadStrategy<E extends ITask> implements DownloadStrategy<E> {
     private volatile boolean isPaused;
     private volatile boolean isCanceled;
     public void pause() {
@@ -24,5 +24,6 @@ public abstract class AbsDownloadStrategy<E extends ProgressTask> implements Dow
     public boolean isPaused() {
         return isPaused;
     }
+
 
 }

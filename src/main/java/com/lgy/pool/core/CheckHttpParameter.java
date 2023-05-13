@@ -36,7 +36,7 @@ public class CheckHttpParameter {
 
 
 	public static class CheckResult{
-		boolean isSupportRange = false;
-		int contentLength = 0;
+		public boolean isSupportRange = false;
+		public int contentLength = 0;
 	}
 }

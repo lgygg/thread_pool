@@ -21,7 +21,7 @@ public class DefaultDownloadStrategy extends AbsDownloadStrategy<ProgressTask> {
     public void download(ProgressTask task) {
         DownloadListener listener = task.getDownloadListener();
         listener.onDownloadStart(task);
-        TaskBean taskBean = task.getTask();
+        TaskBean taskBean = task.getTaskBean();
         String url = taskBean.url;
 
         CheckHttpParameter.CheckResult result = CheckHttpParameter.check(url);
@@ -158,7 +158,7 @@ public class DefaultDownloadStrategy extends AbsDownloadStrategy<ProgressTask> {
             } else if (isCanceled()) {
                 listener.onDownloadCanceled(task);
             }  else {
-                task.getTask().percent = 100;
+                task.getTaskBean().percent = 100;
                 listener.onDownloadCompleted(task);
             }
         } catch (Exception e) {

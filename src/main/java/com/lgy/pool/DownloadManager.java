@@ -39,6 +39,18 @@ public class DownloadManager {
         }
     }
 
+    public void setContext(Context context,ThreadPool pool) {
+        this.pool = pool;
+        if (context != null) {
+            try {
+                dataChanger = new DataChanger.Builder().init(context).build();
+                pool.setDataChanger(dataChanger);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void addObserver(DataWatcher watcher){
         pool.addObserver(watcher);
     }

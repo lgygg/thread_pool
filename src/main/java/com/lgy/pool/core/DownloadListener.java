@@ -1,6 +1,6 @@
 package com.lgy.pool.core;
 
-interface DownloadListener<E> {
+public interface DownloadListener<E> {
     void onDownloadStart(E task);
     void onProgressChanged(int progress,E task);
 

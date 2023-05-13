@@ -7,15 +7,15 @@ import com.lgy.pool.core.bean.TaskBean;
  * @author: Administrator
  * @date: 2023/5/10
  */
-public class ProgressTask implements Runnable{
+public class ProgressTask implements ITask{
     private TaskBean taskBean;
-    private DownloadStrategy<ProgressTask> downloadStrategy;
+    private DownloadStrategy downloadStrategy;
     private DownloadListener downloadListener;
     public ProgressTask(TaskBean taskBean){
         this(new DefaultDownloadStrategy(),taskBean);
     }
 
-    public ProgressTask(DownloadStrategy<ProgressTask> downloadStrategy,TaskBean taskBean){
+    public ProgressTask(DownloadStrategy downloadStrategy,TaskBean taskBean){
         this.downloadStrategy = downloadStrategy;
         this.taskBean = taskBean;
     }
@@ -28,11 +28,7 @@ public class ProgressTask implements Runnable{
         return downloadListener;
     }
 
-    public void setTask(TaskBean taskBean) {
-        this.taskBean = taskBean;
-    }
-
-    public TaskBean getTask() {
+    public TaskBean getTaskBean() {
         return taskBean;
     }
 

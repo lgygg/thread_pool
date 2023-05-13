@@ -65,16 +65,16 @@ public class ThreadPool<E extends ProgressTask> implements DownloadListener<E> {
                 break;
             }
             item = this.waitingList.remove();
-            if (item.getTask().id != task.getTask().id) {
+            if (item.getTaskBean().id != task.getTaskBean().id) {
                 this.waitingList.add(item);
             }
         }
 
         if (runningMap.size() >= runningListSize) {
            E bean =  runningMap.values().iterator().next();
-            if (bean.getTask().status != State.END) {
+            if (bean.getTaskBean().status != State.END) {
                 this.pause(bean);
-                return bean.getTask();
+                return bean.getTaskBean();
             }
         }
         return null;
@@ -110,7 +110,7 @@ public class ThreadPool<E extends ProgressTask> implements DownloadListener<E> {
             if (task != null) {
                 task.start();
                 LogUtils.eTag("onDownloadStart","this.runningMap.size:"+this.runningMap.size() +"/"+this.runningListSize);
-                this.runningMap.put(task.getTask().id,task);
+                this.runningMap.put(task.getTaskBean().id,task);
                 this.executorService.execute(task);
             }
         }
@@ -119,7 +119,7 @@ public class ThreadPool<E extends ProgressTask> implements DownloadListener<E> {
 
     private E getTaskByKey(LinkedBlockingDeque<E> list, String key){
         for (E temp:list) {
-            if (key.equals(temp.getTask().id)) {
+            if (key.equals(temp.getTaskBean().id)) {
                 return temp;
             }
         }
@@ -137,7 +137,7 @@ public class ThreadPool<E extends ProgressTask> implements DownloadListener<E> {
         if (task == null) {
             throw new Exception("task request no null!");
         }
-        if (this.runningMap.containsKey(task.getTask().id) || getTaskByKey(waitingList,task.getTask().id)!=null) {
+        if (this.runningMap.containsKey(task.getTaskBean().id) || getTaskByKey(waitingList,task.getTaskBean().id)!=null) {
             return true;
         }
         return false;
@@ -145,7 +145,7 @@ public class ThreadPool<E extends ProgressTask> implements DownloadListener<E> {
 
     private void pause(E task) {
         task.pause();
-        this.runningMap.remove(task.getTask().id);
+        this.runningMap.remove(task.getTaskBean().id);
     }
 
     public void pause(String id) {
@@ -162,68 +162,68 @@ public class ThreadPool<E extends ProgressTask> implements DownloadListener<E> {
 
     private void cancel(E task) {
         task.cancel();
-        this.runningMap.remove(task.getTask().id);
+        this.runningMap.remove(task.getTaskBean().id);
     }
 
     @Override
     public void onDownloadStart(E task) {
-        LogUtils.dTag("onDownloadStart", "name:" + task.getTask().name + " " +
-                "\nurl:" + task.getTask().url);
+        LogUtils.dTag("onDownloadStart", "name:" + task.getTaskBean().name + " " +
+                "\nurl:" + task.getTaskBean().url);
         if (dataChanger != null) {
-            dataChanger.updateStatus(task.getTask());
+            dataChanger.updateStatus(task.getTaskBean());
         }
     }
 
     @Override
     public void onProgressChanged(int progress, E task) {
-        LogUtils.dTag("onProgressChanged", "name:" + task.getTask().name + " " +
-                "\nurl:" + task.getTask().url+ "\n progress:"+task.getTask().percent);
+        LogUtils.dTag("onProgressChanged", "name:" + task.getTaskBean().name + " " +
+                "\nurl:" + task.getTaskBean().url+ "\n progress:"+task.getTaskBean().percent);
         if (dataChanger != null) {
-            dataChanger.updateStatus(task.getTask());
+            dataChanger.updateStatus(task.getTaskBean());
         }
     }
 
     @Override
     public void onDownloadPaused(E task) {
         this.addTaskToRunningList(this.waitingList);
-        LogUtils.dTag("onDownloadPaused", "name:" + task.getTask().name + " " +
-                "\nurl:" + task.getTask().url+ "\n progress:"+task.getTask().percent);
+        LogUtils.dTag("onDownloadPaused", "name:" + task.getTaskBean().name + " " +
+                "\nurl:" + task.getTaskBean().url+ "\n progress:"+task.getTaskBean().percent);
         if (dataChanger != null) {
-            dataChanger.updateStatus(task.getTask());
+            dataChanger.updateStatus(task.getTaskBean());
         }
     }
 
     @Override
     public void onDownloadCanceled(E task) {
-        LogUtils.dTag("onDownloadCanceled","name:" + task.getTask().name + " " +
-                "\nurl:" + task.getTask().url+ "\n progress:"+task.getTask().percent);
+        LogUtils.dTag("onDownloadCanceled","name:" + task.getTaskBean().name + " " +
+                "\nurl:" + task.getTaskBean().url+ "\n progress:"+task.getTaskBean().percent);
         if (dataChanger != null) {
-            dataChanger.updateStatus(task.getTask());
+            dataChanger.updateStatus(task.getTaskBean());
         }
     }
 
     @Override
     public void onDownloadCompleted(E task) {
         task.end();
-        this.runningMap.remove(task.getTask().id);
+        this.runningMap.remove(task.getTaskBean().id);
         this.addTaskToRunningList(this.waitingList);
-        LogUtils.dTag("onDownloadCompleted", "name:" + task.getTask().name + " " +
-                "\nurl:" + task.getTask().url+ "\n progress:"+task.getTask().percent);
+        LogUtils.dTag("onDownloadCompleted", "name:" + task.getTaskBean().name + " " +
+                "\nurl:" + task.getTaskBean().url+ "\n progress:"+task.getTaskBean().percent);
         if (dataChanger != null) {
-            dataChanger.updateStatus(task.getTask());
+            dataChanger.updateStatus(task.getTaskBean());
         }
     }
 
     @Override
     public void onDownloadError(E task, String message) {
         task.cancel();
-        this.runningMap.remove(task.getTask().id);
+        this.runningMap.remove(task.getTaskBean().id);
         LogUtils.dTag("onDownloadError",
                 "errorMsg:"+ message +
-                "\nname:" + task.getTask().name + " " +
-                "\nurl:" + task.getTask().url+ "\nprogress:"+task.getTask().percent);
+                "\nname:" + task.getTaskBean().name + " " +
+                "\nurl:" + task.getTaskBean().url+ "\nprogress:"+task.getTaskBean().percent);
         if (dataChanger != null) {
-            dataChanger.updateStatus(task.getTask());
+            dataChanger.updateStatus(task.getTaskBean());
         }
     }
 }
